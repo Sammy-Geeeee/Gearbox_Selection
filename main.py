@@ -6,16 +6,27 @@ And recommend a gearbox and motor combination that will provide the requested ou
 """
 
 
+import string
+import re
 import openpyxl
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font
 from ttkwidgets import CheckboxTreeview
 
+from functions import applicable_series
+
 
 def main():
     root = tk.Tk()  # To define the main window object
     window = Window(root, 'Gearbox Selection', '1500x750')  # Window size and name defined here
+
+
+
+
+
+
+
 
 class Window:
     def __init__(self, root, title, geometry):
@@ -29,49 +40,51 @@ class Window:
         entry_width = 10
 
         # This will set all the primary frames and their information
-        label_inputs = tk.Label(self.root, text='Input Information')
-        frame_inputs = tk.Frame(self.root)
-        separator_in_out = ttk.Separator(self.root, orient='vertical')
-        label_output = tk.Label(self.root, text='Output Information')
-        frame_outputs = tk.Frame(self.root)
-        separator_out_reco = ttk.Separator(self.root, orient='vertical')
-        label_reco = tk.Label(self.root, text='Gearbox Recommendations')
-        frame_reco = tk.Frame(self.root)
+        self.label_inputs = tk.Label(self.root, text='Input Information')
+        self.frame_inputs = tk.Frame(self.root)
+        self.separator_in_out = ttk.Separator(self.root, orient='vertical')
+        self.label_output = tk.Label(self.root, text='Output Information')
+        self.frame_outputs = tk.Frame(self.root)
+        self.separator_out_reco = ttk.Separator(self.root, orient='vertical')
+        self.label_reco = tk.Label(self.root, text='Gearbox Recommendations')
+        self.frame_reco = tk.Frame(self.root)
         # This will be all the positioning for these primary frames
-        label_inputs.grid(row=0, column=0, padx=pad_ext, pady=pad_ext)
-        frame_inputs.grid(row=1, column=0)
-        separator_in_out.grid(row=0, column=1, rowspan=2, padx=pad_ext, pady=pad_ext, sticky='nsew')
-        label_output.grid(row=0, column=2, padx=pad_ext, pady=pad_ext)
-        frame_outputs.grid(row=1, column=2)
-        separator_out_reco.grid(row=0, column=3, rowspan=2, padx=pad_ext, pady=pad_ext, sticky='nsew')
-        label_reco.grid(row=0, column=4, padx=pad_ext, pady=pad_ext)
-        frame_reco.grid(row=1, column=4)
+        self.label_inputs.grid(row=0, column=0, padx=pad_ext, pady=pad_ext)
+        self.frame_inputs.grid(row=1, column=0)
+        self.separator_in_out.grid(row=0, column=1, rowspan=2, padx=pad_ext, pady=pad_ext, sticky='nsew')
+        self.label_output.grid(row=0, column=2, padx=pad_ext, pady=pad_ext)
+        self.frame_outputs.grid(row=1, column=2)
+        self.separator_out_reco.grid(row=0, column=3, rowspan=2, padx=pad_ext, pady=pad_ext, sticky='nsew')
+        self.label_reco.grid(row=0, column=4, padx=pad_ext, pady=pad_ext)
+        self.frame_reco.grid(row=1, column=4)
 
         # Widgets in the input frame
-        label_option_tree = tk.Label(frame_inputs, text="Applicable Series")
-        scroll_series = tk.Scrollbar(frame_inputs)
-        option_tree = CheckboxTreeview(frame_inputs, yscrollcommand=scroll_series.set)
-        scroll_series.config(command=option_tree.yview)
-        separator_input1 = ttk.Separator(frame_inputs, orient='horizontal')
-        label_motor_info = tk.Label(frame_inputs, text='Motor Input')
-        label_power = tk.Label(frame_inputs, text='Power')
-        entry_power = tk.Entry(frame_inputs, width=entry_width)
-        units = ['test', 'one', '2']  # TODO - FIX THIS TO BE APPROPRIATE LATER ON
-        menu_power = ttk.OptionMenu(frame_inputs, tk.StringVar(frame_inputs), *units)
-        label_poles = tk.Label(frame_inputs, text='Poles')
-        poles = ['two', '4', 6, 'Eight']  # TODO - FIX THIS LATER ON
-        menu_poles = ttk.OptionMenu(frame_inputs, tk.StringVar(frame_inputs), *poles)
+        self.label_option_tree = tk.Label(self.frame_inputs, text="Applicable Series")
+        self.scroll_series = tk.Scrollbar(self.frame_inputs)
+        self.option_tree = CheckboxTreeview(self.frame_inputs, yscrollcommand=self.scroll_series.set)
+        self.scroll_series.config(command=self.option_tree.yview)
+        self.separator_input1 = ttk.Separator(self.frame_inputs, orient='horizontal')
+        self.label_motor_info = tk.Label(self.frame_inputs, text='Motor Input')
+        self.label_power = tk.Label(self.frame_inputs, text='Power')
+        self.entry_power = tk.Entry(self.frame_inputs, width=entry_width)
+        self.units = ['test', 'one', '2']  # TODO - FIX THIS TO BE APPROPRIATE LATER ON
+        self.stringvar_power = tk.StringVar(self.frame_inputs)
+        self.menu_power = ttk.OptionMenu(self.frame_inputs, self.stringvar_power, *self.units)
+        self.label_poles = tk.Label(self.frame_inputs, text='Poles')
+        self.poles = ['two', '4', 6, 'Eight']  # TODO - FIX THIS LATER ON
+        self.stringvar_poles = tk.StringVar(self.frame_inputs)
+        self.menu_poles = ttk.OptionMenu(self.frame_inputs, self.stringvar_poles, *self.poles)
         # Info for position of these here
-        label_option_tree.grid(row=0, column=0, columnspan=3, padx=pad_ext, pady=pad_ext)
-        scroll_series.grid(row=1, column=2, padx=pad_ext, pady=pad_ext, sticky='ns')
-        option_tree.grid(row=1, column=0, columnspan=2, padx=pad_ext, pady=pad_ext)
-        separator_input1.grid(row=2, column=0, columnspan=3, padx=pad_ext, pady=pad_ext, sticky='nsew')
-        label_motor_info.grid(row=3, column=0, columnspan=3)
-        label_power.grid(row=4, column=0, padx=pad_ext, pady=pad_ext)
-        entry_power.grid(row=4, column=1, padx=pad_ext, pady=pad_ext)
-        menu_power.grid(row=4, column=2, padx=pad_ext, pady=pad_ext)
-        label_poles.grid(row=5, column=0, padx=pad_ext, pady=pad_ext)
-        menu_poles.grid(row=5, column=2, padx=pad_ext, pady=pad_ext)
+        self.label_option_tree.grid(row=0, column=0, columnspan=3, padx=pad_ext, pady=pad_ext)
+        self.scroll_series.grid(row=1, column=2, padx=pad_ext, pady=pad_ext, sticky='ns')
+        self.option_tree.grid(row=1, column=0, columnspan=2, padx=pad_ext, pady=pad_ext)
+        self.separator_input1.grid(row=2, column=0, columnspan=3, padx=pad_ext, pady=pad_ext, sticky='nsew')
+        self.label_motor_info.grid(row=3, column=0, columnspan=3)
+        self.label_power.grid(row=4, column=0, padx=pad_ext, pady=pad_ext)
+        self.entry_power.grid(row=4, column=1, padx=pad_ext, pady=pad_ext)
+        self.menu_power.grid(row=4, column=2, padx=pad_ext, pady=pad_ext)
+        self.label_poles.grid(row=5, column=0, padx=pad_ext, pady=pad_ext)
+        self.menu_poles.grid(row=5, column=2, padx=pad_ext, pady=pad_ext)
 
         # This code is to generate all the series and sizes in the selection tree
         series_sizes = {'VF_W':[], 'A':[], 'C':[], 'F':[]}
@@ -86,58 +99,131 @@ class Window:
                     series_sizes[series_size].append(f'{series_size_name}    ({series_size_shaft}mm, {series_size_shaft_alt}mm)')
                 else:
                     series_sizes[series_size].append(f'{series_size_name}    ({series_size_shaft}mm)')
+            
         # To insert all these sizes into the tree
         for key in series_sizes:
-            option_tree.insert('', 'end', key, text=key)
+            self.option_tree.insert('', 'end', key, text=key)
             for value in series_sizes[key]:
-                option_tree.insert(key, 'end', value, text=value)
+                self.option_tree.insert(key, 'end', value, text=value)
 
         # Output frame widgets here
-        label_speed = tk.Label(frame_outputs, text="Speed")
-        entry_speed = tk.Entry(frame_outputs, width=entry_width)
-        options_speed = ['test', 'one', '2']  # TODO - FIX THIS TO BE APPROPRIATE LATER ON
-        menu_speed = ttk.OptionMenu(frame_outputs, tk.StringVar(frame_outputs), *options_speed)
-        label_torque = tk.Label(frame_outputs, text="Torque")
-        entry_torque = tk.Entry(frame_outputs, width=entry_width)
-        options_torque = ['test', 'one', '2']  # TODO - FIX THIS TO BE APPROPRIATE LATER ON
-        menu_torque = ttk.OptionMenu(frame_outputs, tk.StringVar(frame_outputs), *options_torque)
-        label_safety = tk.Label(frame_outputs, text='Safety Factor')
-        entry_safety = tk.Entry(frame_outputs, width=entry_width)
+        self.label_speed = tk.Label(self.frame_outputs, text="Speed")
+        self.entry_speed = tk.Entry(self.frame_outputs, width=entry_width)
+        self.options_speed = ['test', 'one', '2']  # TODO - FIX THIS TO BE APPROPRIATE LATER ON
+        self.stringvar_speed = tk.StringVar(self.frame_outputs)
+        self.menu_speed = ttk.OptionMenu(self.frame_outputs, self.stringvar_speed, *self.options_speed)
+        self.label_torque = tk.Label(self.frame_outputs, text="Torque")
+        self.entry_torque = tk.Entry(self.frame_outputs, width=entry_width)
+        self.options_torque = ['test', 'one', '2']  # TODO - FIX THIS TO BE APPROPRIATE LATER ON
+        self.stringvar_torque = tk.StringVar(self.frame_outputs)
+        self.menu_torque = ttk.OptionMenu(self.frame_outputs, self.stringvar_torque, *self.options_torque)
+        self.label_safety = tk.Label(self.frame_outputs, text='Safety Factor')
+        self.entry_safety = tk.Entry(self.frame_outputs, width=entry_width)
         # And positional info for all these widgets
-        label_speed.grid(row=0, column=0, padx=pad_ext, pady=pad_ext)
-        entry_speed.grid(row=0, column=1, padx=pad_ext, pady=pad_ext)
-        menu_speed.grid(row=0, column=2, padx=pad_ext, pady=pad_ext)
-        label_torque.grid(row=1, column=0, padx=pad_ext, pady=pad_ext)
-        entry_torque.grid(row=1, column=1, padx=pad_ext, pady=pad_ext)
-        menu_torque.grid(row=1, column=2, padx=pad_ext, pady=pad_ext)
-        label_safety.grid(row=2, column=0, padx=pad_ext, pady=pad_ext)
-        entry_safety.grid(row=2, column=1, padx=pad_ext, pady=pad_ext)
+        self.label_speed.grid(row=0, column=0, padx=pad_ext, pady=pad_ext)
+        self.entry_speed.grid(row=0, column=1, padx=pad_ext, pady=pad_ext)
+        self.menu_speed.grid(row=0, column=2, padx=pad_ext, pady=pad_ext)
+        self.label_torque.grid(row=1, column=0, padx=pad_ext, pady=pad_ext)
+        self.entry_torque.grid(row=1, column=1, padx=pad_ext, pady=pad_ext)
+        self.menu_torque.grid(row=1, column=2, padx=pad_ext, pady=pad_ext)
+        self.label_safety.grid(row=2, column=0, padx=pad_ext, pady=pad_ext)
+        self.entry_safety.grid(row=2, column=1, padx=pad_ext, pady=pad_ext)
 
         # Gearbox recommendations widgets here
-        scroll_list = tk.Scrollbar(frame_reco)
-        list_reco = tk.Listbox(frame_reco, yscrollcommand=scroll_list.set, width=40, height=10)
-        scroll_list.config(command=list_reco.yview)
-        button_reco = tk.Button(frame_reco, text='Generate Recommendations', command="")  # TODO - Change the command to an actual function
-
+        self.scroll_list = tk.Scrollbar(self.frame_reco)
+        self.list_reco = tk.Listbox(self.frame_reco, yscrollcommand=self.scroll_list.set, width=40, height=10)
+        self.scroll_list.config(command=self.list_reco.yview)
+        self.button_reco = tk.Button(self.frame_reco, text='Generate Recommendations', command=self.retrieve_inputs)  # TODO - Change the command to an actual function
         # And positioning info
-        scroll_list.grid(row=0, column=1, sticky='ns')
-        list_reco.grid(row=0, column=0, padx=pad_ext, pady=pad_ext, sticky='nsew')
-        button_reco.grid(row=1, column=0, padx=pad_ext, pady=pad_ext)
-
-
-
-        
-        
-        
-
-
-
-
-
-
-
+        self.scroll_list.grid(row=0, column=1, sticky='ns')
+        self.list_reco.grid(row=0, column=0, padx=pad_ext, pady=pad_ext, sticky='nsew')
+        self.button_reco.grid(row=1, column=0, padx=pad_ext, pady=pad_ext)
 
         self.root.mainloop()
+    
+    def retrieve_inputs(self):
+        motor_power = self.entry_power.get()
+        motor_power_unit = self.stringvar_power.get()
+        motor_poles = self.stringvar_poles.get()
+        output_speed = self.entry_speed.get()
+        output_speed_unit = self.stringvar_speed.get()
+        output_torque = self.entry_torque.get()
+        output_torque_unit = self.stringvar_torque.get()
+        safety_factor = self.entry_safety.get()
+        series_sizes = self.option_tree.get_checked()  # To get checked items from tree
+        # Below code is to take tree inputs and turn them into a useful dictionary
+        applicable_series_sizes = {'VF_W':[], 'A':[], 'C':[], 'F':[]}
+        replacement = str.maketrans(string.punctuation, ' '*32)
+        for serie_size in series_sizes:
+            no_punc = serie_size.translate(replacement)
+            name = re.search(r'[A-Z]+ [A-Z]+ [0-9]+ [0-9]+|[A-Z]+ [0-9]+', no_punc).group()
+            print([name])
+            if (name[0] == 'V' or name[0] == 'W'):
+                applicable_series_sizes['VF_W'].append(name)
+            elif (name[0] == 'A'):
+                applicable_series_sizes['A'].append(name)
+            elif (name[0] == 'C'):
+                applicable_series_sizes['C'].append(name)
+            elif (name[0] == 'F'):
+                applicable_series_sizes['F'].append(name)
+
+
+
+
+
+
+
+
+
+        print()
+        print(f'applicable series: {applicable_series_sizes}')
+        print(f'power: {motor_power} ({motor_power_unit})')
+        print(f'poles: {motor_poles}')
+        print(f'speed: {output_speed} ({output_speed_unit})')
+        print(f'torque: {output_torque} ({output_torque_unit})')
+        print(f'S.F: {safety_factor}')
+        print()
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def calculate_gearboxes(self):
+        pass
+        # self.list_reco.delete(0, tk.END)
+        # inputs = {
+        #     'type': str(self.type_menu_value.get()),
+        #     'out_spd': float(self.entry_spd.get()),
+        #     'out_trq': float(self.entry_tor.get()),
+        #     'shft_min': float(self.entry_shft_min.get()),
+        #     'shft_max': float(self.entry_shft_max.get()),
+        #     'tol_spd': float(self.entry_spd_tol.get()),
+        #     'tol_trq': float(self.entry_tor_tol.get())
+        # }
+
+        # options = entire_function(inputs)
+
+        # for option in sorted(options):
+        #     self.list_reco.insert(tk.END, option[0])
+        #     self.list_reco.insert(tk.END, option[1])
+        #     if option[2] != '':
+        #         self.list_reco.insert(tk.END, option[2])
+        #     self.list_reco.insert(tk.END, '')
+
+
+
 
 
 
@@ -154,43 +240,6 @@ main()
 
 
 
-
-
-
-
-
-
-
-
-# class Window:
-#     def __init__(self, root, title, geometry):
-#         
-#         
-
-#         
-
-#         self.root.mainloop()
-
-#     def calculate_gearboxes(self):
-#         self.list_reco.delete(0, tk.END)
-#         inputs = {
-#             'type': str(self.type_menu_value.get()),
-#             'out_spd': float(self.entry_spd.get()),
-#             'out_trq': float(self.entry_tor.get()),
-#             'shft_min': float(self.entry_shft_min.get()),
-#             'shft_max': float(self.entry_shft_max.get()),
-#             'tol_spd': float(self.entry_spd_tol.get()),
-#             'tol_trq': float(self.entry_tor_tol.get())
-#         }
-
-#         options = entire_function(inputs)
-
-#         for option in sorted(options):
-#             self.list_reco.insert(tk.END, option[0])
-#             self.list_reco.insert(tk.END, option[1])
-#             if option[2] != '':
-#                 self.list_reco.insert(tk.END, option[2])
-#             self.list_reco.insert(tk.END, '')
 
 
 
