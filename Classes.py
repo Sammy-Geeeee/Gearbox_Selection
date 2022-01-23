@@ -114,7 +114,6 @@ class GearedMotor:
     def printData(self):
         data0 = f'{self.gearbox_brand} {self.gearbox_serie_size}_ {self.gearbox_ratio}:1 {self.gearbox_frame} B_'
         data1 = f'{self.motor_brand} {self.motor_series} {self.motor_frame} {self.motor_poles} B_  ({self.motor_power}kW, {self.motor_poles}P)'
-
         if self.gearbox_shaft[1] != 'None':
             data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox_shaft[0]}mm or {self.gearbox_shaft[1]}mm output'
         else:

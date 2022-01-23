@@ -91,7 +91,7 @@ def find_gearmotors(inputs):
 
 def make_recommendations(inputs):
     all_gearmotors = find_gearmotors(inputs)
-    good_gearmotors = []
+    applicable_gearmotors = []
 
     # To turn all the inputs into numbers easy to work with
     spd_lower = inputs['spd'] * (1 - inputs['spd_tol']/100)
@@ -104,6 +104,6 @@ def make_recommendations(inputs):
         if spd_lower <= gm.gm_spd <= spd_higher:
             if trq_lower <= gm.gm_trq <= trq_higher:
                 if gm.gm_safety >= safety:
-                    good_gearmotors.append(gm)
+                    applicable_gearmotors.append(gm)
 
-    return good_gearmotors
+    return applicable_gearmotors

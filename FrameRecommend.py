@@ -160,4 +160,8 @@ class FrameRecommend(tk.Frame):
             self.list_reco.insert(tk.END, gearedmotor.printData()[0])
             self.list_reco.insert(tk.END, gearedmotor.printData()[1])
             self.list_reco.insert(tk.END, gearedmotor.printData()[2])
+
+            if gearedmotor.gm_safety < 1.3:
+                self.list_reco.insert(tk.END, 'Safety Factor less than 1.3 - NOT RECOMMENDED')
+
             self.list_reco.insert(tk.END, '')
