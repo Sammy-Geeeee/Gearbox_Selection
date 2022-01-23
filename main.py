@@ -28,14 +28,15 @@ class Window:
         notebook_main.pack(expand=1, fill='both', padx=pad_ext, pady=pad_ext)
 
         # To create the frames for each main tab
-        tab_checkspecs = tk.Frame(master=notebook_main)
+        tab_check = tk.Frame(master=notebook_main)
         tab_recommend = tk.Frame(master=notebook_main)
         # And to add them to the main notebook
-        notebook_main.add(tab_checkspecs, text='Check Geared Motor')
+        notebook_main.add(tab_check, text='Check Geared Motor')
         notebook_main.add(tab_recommend, text='Recommend Geared Motor')
 
         # Putting all the frames into the main program now
         frame_recommend = FrameRecommend(tab_recommend)
+        frame_check = FrameCheck(tab_check)
 
         self.root.mainloop()  # To actually run the program loop
 

@@ -21,26 +21,27 @@ class Motor:
         self.poles = poles
     
     def printData(self):
-        print(f'{self.brand} {self.series} {self.frame} {self.poles}')
-        print(f'{self.power}kW, {self.speed}rpm')
-        print(f'{self.shaft}mm shaft, {self.weight}kg')
-        return f'{self.brand} {self.series} {self.frame} {self.poles}    {self.power}kW, {self.speed}rpm    {self.shaft}mm shaft, {self.weight}kg'
+        data0 = f'{self.brand} {self.series} {self.frame} {self.poles}'
+        data1 = f'{self.power}kW, {self.speed}rpm'
+        data2 = f'{self.shaft}mm shaft, {self.weight}kg'
+        return [data0, data1, data2]
 
 
 class Gearbox:
-    def __init__(self, serie_size, ratio, p8data, p6data, p4data, p2data):
+    def __init__(self, serie_size, ratio, shaft, p8data, p6data, p4data, p2data):
         self.brand = 'Bonfig'
         self.serie_size = serie_size
         self.ratio = ratio
+        self.shaft = shaft
         self.p8data = p8data
         self.p6data = p6data
         self.p4data = p4data
         self.p2data = p2data
     
     def printData(self):
-        print(f'{self.brand} {self.serie_size}_ {self.ratio}:1')
-        print(f'{self.p8data}    {self.p6data}    {self.p4data}    {self.p2data}')
-        return f'{self.brand} {self.serie_size}_ {self.ratio}:1    {self.p8data}    {self.p6data}    {self.p4data}    {self.p2data}'
+        data0 = f'{self.brand} {self.serie_size}_ {self.ratio}:1'
+        data1 = f'{self.p8data}    {self.p6data}    {self.p4data}    {self.p2data}'
+        return [data0, data1]
 
 
 class GearedMotor:
@@ -60,10 +61,11 @@ class GearedMotor:
         self.gearbox_brand = gearbox.brand
         self.gearbox_serie_size = gearbox.serie_size
         self.gearbox_ratio = gearbox.ratio
+        self.gearbox_shaft = gearbox.shaft
         self.gearbox_frame = f"P{re.search(r'[0-9]+', self.motor_frame).group()}"
 
         # Now to calculate all the stats that are part of these being together
-        if 500 > self.motor_speed or self.motor_speed > 2800:
+        if 500 > self.motor_speed or self.motor_speed > 3000:
             print(f'{self.motor_speed}    Invalid motor speed')
         elif 500 <= self.motor_speed <= 900:
             motor_low = 500
@@ -81,6 +83,12 @@ class GearedMotor:
             low_data = self.gearbox.p4data
             high_data = self.gearbox.p2data
         
+        elif 2800 < self.motor_speed <= 3000:
+            motor_low = 2800 * 0.9999
+            motor_high = 2800 * 1.0001
+            low_data = self.gearbox.p4data
+            high_data = self.gearbox.p2data
+
         # Getting all the data from each gearbox
         spd_low = low_data[0]
         trq_low = low_data[1]
@@ -104,11 +112,12 @@ class GearedMotor:
 
 
     def printData(self):
-        print(f'{self.gearbox_brand} {self.gearbox_serie_size}_ {self.gearbox_ratio}:1 {self.gearbox_frame} B_')
-        print(f'{self.motor_brand} {self.motor_series} {self.motor_frame} {self.motor_poles} B_ ({self.motor_power}kW, {self.motor_poles}P)')
-        print(f'{self.gm_spd}rpm, {self.gm_trq}Nm, {self.gm_safety} S.F.')
-        return f'{self.gearbox_brand} {self.gearbox_serie_size}_ {self.gearbox_ratio}:1 {self.gearbox_frame} B_    {self.motor_brand} {self.motor_series} {self.motor_frame} {self.motor_poles} B_ ({self.motor_power}kW, {self.motor_poles}P)    {self.gm_spd}rpm, {self.gm_trq}Nm, {self.gm_safety} S.F.'
+        data0 = f'{self.gearbox_brand} {self.gearbox_serie_size}_ {self.gearbox_ratio}:1 {self.gearbox_frame} B_'
+        data1 = f'{self.motor_brand} {self.motor_series} {self.motor_frame} {self.motor_poles} B_  ({self.motor_power}kW, {self.motor_poles}P)'
 
-
-
-
+        if self.gearbox_shaft[1] != 'None':
+            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox_shaft[0]}mm or {self.gearbox_shaft[1]}mm output'
+        else:
+            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox_shaft[0]}mm output'
+        
+        return [data0, data1, data2]

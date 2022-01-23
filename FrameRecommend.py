@@ -1,7 +1,7 @@
 # This will define the FrameRecommend class, which is just the Recommend Frame in that tab
 
 
-from functions import *
+from functionRecommend import *
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font
@@ -101,8 +101,8 @@ class FrameRecommend(tk.Frame):
 
         # Widgets in the Recommend tab input frame
         self.scroll_reco = tk.Scrollbar(self.frame_outputs)
-        self.list_reco = tk.Listbox(self.frame_outputs, width=150, height=30, yscrollcommand=self.scroll_reco.set)
-        self.button_reco = tk.Button(self.frame_outputs, text='Generate Recommendations', command=lambda:self.performFunction())
+        self.list_reco = tk.Listbox(self.frame_outputs, width=130, height=30, yscrollcommand=self.scroll_reco.set)
+        self.button_reco = tk.Button(self.frame_outputs, text='Generate Recommendations', command=lambda:self.postOutputs())
         # And their positioning
         self.scroll_reco.grid(row=0, column=1, padx=pad_ext, pady=pad_ext, sticky='ns')
         self.list_reco.grid(row=0, column=0, padx=pad_ext, pady=pad_ext)
@@ -139,11 +139,11 @@ class FrameRecommend(tk.Frame):
 
         # Dictionary of all the input information
         inputs = {
-        'spd': self.spd,
-        'spd_tol': self.spd_tol,
-        'trq': self.trq,
-        'trq_tol': self.trq_tol,
-        'safety': self.safety,
+        'spd': float(self.spd),
+        'spd_tol': float(self.spd_tol),
+        'trq': float(self.trq),
+        'trq_tol': float(self.trq_tol),
+        'safety': float(self.safety),
         'series_sizes': self.series_sizes,
         'poles': self.poles
         }
@@ -151,44 +151,13 @@ class FrameRecommend(tk.Frame):
         return inputs
 
 
-
-
-
-
-
-
-
-
-
     def postOutputs(self):
+        inputs = self.retrieveInputs()
         self.list_reco.delete(0, tk.END)
 
-        inputs = self.retrieveInputs()
-
-        # motors = find_motors(inputs)
-        # for motor in motors:
-        #     self.list_reco.insert(tk.END, motor.printData())
-
-        # gearboxes = find_gearboxes(inputs)
-        # for gearbox in gearboxes:
-        #     self.list_reco.insert(tk.END, gearbox.printData())
-            
-
-        # gearedmotors = find_gearmotors(inputs)
-        # for gearedmotor in gearedmotors:
-        #     self.list_reco.insert(tk.END, gearedmotor.printData())
-
-
-
-    def performFunction(self):
-        self.postOutputs()
-
-        
-
-
-
-
-
-
-
-
+        gearedmotors = make_recommendations(inputs)
+        for gearedmotor in gearedmotors:
+            self.list_reco.insert(tk.END, gearedmotor.printData()[0])
+            self.list_reco.insert(tk.END, gearedmotor.printData()[1])
+            self.list_reco.insert(tk.END, gearedmotor.printData()[2])
+            self.list_reco.insert(tk.END, '')
