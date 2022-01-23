@@ -100,12 +100,15 @@ class FrameRecommend(tk.Frame):
         
 
         # Widgets in the Recommend tab input frame
-        self.list_reco = tk.Listbox(self.frame_outputs, width=50, height=30)
+        self.scroll_reco = tk.Scrollbar(self.frame_outputs)
+        self.list_reco = tk.Listbox(self.frame_outputs, width=150, height=30, yscrollcommand=self.scroll_reco.set)
         self.button_reco = tk.Button(self.frame_outputs, text='Generate Recommendations', command=lambda:self.performFunction())
         # And their positioning
+        self.scroll_reco.grid(row=0, column=1, padx=pad_ext, pady=pad_ext, sticky='ns')
         self.list_reco.grid(row=0, column=0, padx=pad_ext, pady=pad_ext)
-        self.button_reco.grid(row=1, column=0, padx=pad_ext, pady=pad_ext)
+        self.button_reco.grid(row=1, column=0, columnspan=2, padx=pad_ext, pady=pad_ext)
         # Configs for various things
+        self.scroll_reco.config(command=self.list_reco.yview)
         self.list_reco.config(font=font.Font(size=11))
     
 
@@ -146,18 +149,38 @@ class FrameRecommend(tk.Frame):
         }
 
         return inputs
-    
+
+
+
+
+
+
+
+
+
+
 
     def postOutputs(self):
         self.list_reco.delete(0, tk.END)
 
-        # All this is just used to test the function at the moment, fix up later on
-        motors = recommend_motor(self.retrieveInputs())
-        self.list_reco.insert(tk.END, motors)
-    
+        inputs = self.retrieveInputs()
+
+        # motors = find_motors(inputs)
+        # for motor in motors:
+        #     self.list_reco.insert(tk.END, motor.printData())
+
+        # gearboxes = find_gearboxes(inputs)
+        # for gearbox in gearboxes:
+        #     self.list_reco.insert(tk.END, gearbox.printData())
+            
+
+        # gearedmotors = find_gearmotors(inputs)
+        # for gearedmotor in gearedmotors:
+        #     self.list_reco.insert(tk.END, gearedmotor.printData())
+
+
 
     def performFunction(self):
-        self.retrieveInputs()
         self.postOutputs()
 
         
