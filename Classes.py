@@ -77,15 +77,9 @@ class GearedMotor:
             motor_high = 1400
             low_data = self.gearbox.p6data
             high_data = self.gearbox.p4data
-        elif 1400 < self.motor_speed <= 2800:
+        elif 1400 < self.motor_speed <= 3000:
             motor_low = 1400
             motor_high = 2800
-            low_data = self.gearbox.p4data
-            high_data = self.gearbox.p2data
-        
-        elif 2800 < self.motor_speed <= 3000:
-            motor_low = 2800 * 0.9999
-            motor_high = 2800 * 1.0001
             low_data = self.gearbox.p4data
             high_data = self.gearbox.p2data
 
