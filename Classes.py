@@ -28,9 +28,9 @@ class Motor:
 
 
 class Gearbox:
-    def __init__(self, serie_size, ratio, shaft, p8data, p6data, p4data, p2data):
+    def __init__(self, series_size, ratio, shaft, p8data, p6data, p4data, p2data):
         self.brand = 'Bonfig'
-        self.serie_size = serie_size
+        self.series_size = series_size
         self.ratio = ratio
         self.shaft = shaft
         self.p8data = p8data
@@ -39,7 +39,7 @@ class Gearbox:
         self.p2data = p2data
     
     def printData(self):
-        data0 = f'{self.brand} {self.serie_size}_ {self.ratio}:1'
+        data0 = f'{self.brand} {self.series_size}_ {self.ratio}:1'
         data1 = f'{self.p8data}    {self.p6data}    {self.p4data}    {self.p2data}'
         return [data0, data1]
 
@@ -49,35 +49,20 @@ class GearedMotor:
         # To import the gearbox and motor objects directly
         self.gearbox = gearbox
         self.motor = motor
-
-        # Gearbox and Motor info from objects
-        self.motor_power = motor.power
-        self.motor_speed = motor.speed
-        self.motor_frame = motor.frame
-        self.motor_brand = motor.brand
-        self.motor_series = motor.series
-        self.motor_poles = motor.poles
-        
-        self.gearbox_brand = gearbox.brand
-        self.gearbox_serie_size = gearbox.serie_size
-        self.gearbox_ratio = gearbox.ratio
-        self.gearbox_shaft = gearbox.shaft
-        self.gearbox_frame = f"P{re.search(r'[0-9]+', self.motor_frame).group()}"
+        self.gearbox_frame = f"P{re.search(r'[0-9]+', self.motor.frame).group()}"
 
         # Now to calculate all the stats that are part of these being together
-        if 500 > self.motor_speed or self.motor_speed > 3000:
-            print(f'{self.motor_speed}    Invalid motor speed')
-        elif 500 <= self.motor_speed <= 900:
+        if 500 <= self.motor.speed <= 900:
             motor_low = 500
             motor_high = 900
             low_data = self.gearbox.p8data
             high_data = self.gearbox.p6data
-        elif 900 < self.motor_speed <= 1400:
+        elif 900 < self.motor.speed <= 1400:
             motor_low = 900
             motor_high = 1400
             low_data = self.gearbox.p6data
             high_data = self.gearbox.p4data
-        elif 1400 < self.motor_speed <= 3000:
+        elif 1400 < self.motor.speed <= 3000:
             motor_low = 1400
             motor_high = 2800
             low_data = self.gearbox.p4data
@@ -94,23 +79,23 @@ class GearedMotor:
         eff_high = high_data[3]
 
         # Finding the actual values from interpolation, for gearbox data only
-        gbox_out_spd = interpolation(spd_low, spd_high, motor_low, motor_high, self.motor_speed)
-        gbox_out_trq = interpolation(trq_low, trq_high, motor_low, motor_high, self.motor_speed)
-        gbox_out_pwr = interpolation(pwr_low, pwr_high, motor_low, motor_high, self.motor_speed)
-        gbox_out_eff = interpolation(eff_low, eff_high, motor_low, motor_high, self.motor_speed)
+        gbox_out_spd = interpolation(spd_low, spd_high, motor_low, motor_high, self.motor.speed)
+        gbox_out_trq = interpolation(trq_low, trq_high, motor_low, motor_high, self.motor.speed)
+        gbox_out_pwr = interpolation(pwr_low, pwr_high, motor_low, motor_high, self.motor.speed)
+        gbox_out_eff = interpolation(eff_low, eff_high, motor_low, motor_high, self.motor.speed)
 
         # Now to make the actual ratings for each geared motor combo
         self.gm_spd = gbox_out_spd
-        self.gm_trq = gbox_out_trq * (self.motor_power / gbox_out_pwr)
-        self.gm_safety = gbox_out_pwr / self.motor_power
+        self.gm_trq = gbox_out_trq * (self.motor.power / gbox_out_pwr)
+        self.gm_safety = gbox_out_pwr / self.motor.power
 
 
     def printData(self):
-        data0 = f'{self.gearbox_brand} {self.gearbox_serie_size}_ {self.gearbox_ratio}:1 {self.gearbox_frame} B_'
-        data1 = f'{self.motor_brand} {self.motor_series} {self.motor_frame} {self.motor_poles} B_  ({self.motor_power}kW, {self.motor_poles}P)'
-        if self.gearbox_shaft[1] != 'None':
-            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox_shaft[0]}mm or {self.gearbox_shaft[1]}mm output'
+        data0 = f'{self.gearbox.brand} {self.gearbox.series_size}_ {self.gearbox.ratio}:1 {self.gearbox_frame} B_'
+        data1 = f'{self.motor.brand} {self.motor.series} {self.motor.frame} {self.motor.poles} B_  ({self.motor.power}kW, {self.motor.poles}P)'
+        if self.gearbox.shaft[1] != 'None':
+            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox.shaft[0]}mm or {self.gearbox.shaft[1]}mm output'
         else:
-            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox_shaft[0]}mm output'
+            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox.shaft[0]}mm output'
         
         return [data0, data1, data2]

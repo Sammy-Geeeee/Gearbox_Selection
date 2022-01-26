@@ -2,7 +2,8 @@
 
 """ 
 This program is to take a basic set of mechanical info, for both the input and output of the setup,
-And recommend a gearbox and motor combination that will provide the requested outputs
+And recommend a gearbox and motor combination that will provide the requested outputs.
+There is also a checking function, that will take a series, ratio, and power input, and provide the specs for this.
 """
 
 
@@ -20,8 +21,6 @@ class Window:
         self.root.geometry(geometry)
         # Universal variables
         pad_ext = 5
-        pad_int = 2
-        entry_width = 10
 
         # This will create the main notebook for the entire program
         notebook_main = ttk.Notebook(master=root)
@@ -35,14 +34,14 @@ class Window:
         notebook_main.add(tab_recommend, text='Recommend Geared Motor')
 
         # Putting all the frames into the main program now
-        frame_recommend = FrameRecommend(tab_recommend)
-        frame_check = FrameCheck(tab_check)
+        FrameRecommend(tab_recommend)
+        FrameCheck(tab_check)
 
         self.root.mainloop()  # To actually run the program loop
 
 
 def main():
     window = Window(tk.Tk(), 'Gearbox Selection', '500x500')  # Main window defined here
-
+    
 
 main()

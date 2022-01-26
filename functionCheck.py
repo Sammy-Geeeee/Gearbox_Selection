@@ -7,7 +7,7 @@ from Classes import *
 
 def find_motors(inputs):  # To find all the applicable motors
     motors = []
-    motor_wb = openpyxl.load_workbook('Motors.xlsx')
+    motor_wb = openpyxl.load_workbook('Datasheets/Motors.xlsx')
     for poles in inputs['poles']:
         motor_ws = motor_wb[poles]
 
@@ -38,10 +38,11 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
     p6_cols = [6, 7, 8, 9]
     p4_cols = [10, 11, 12, 13]
     p2_cols = [14, 15, 16, 17]
+    
     # To open all the appropriate workbooks
     for series in inputs['series_sizes']:
         if len(inputs['series_sizes'][series]) > 0:
-            gearbox_wb = openpyxl.load_workbook(f'{series}_Gearboxes.xlsx')
+            gearbox_wb = openpyxl.load_workbook(f'Datasheets/{series}_Gearboxes.xlsx')
             # To open all the appropriate worksheets in each book
             for size in inputs['series_sizes'][series]:
                 gearbox_ws = gearbox_wb[size]
@@ -60,6 +61,7 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
                         sheet_p4data = []
                         sheet_p2data = []
                         
+                        # To populate each of the data points in this list
                         for c in p8_cols:
                             sheet_p8data.append(float(gearbox_ws.cell(row=r, column=c).value))
                         for c in p6_cols:
@@ -94,12 +96,8 @@ def make_recommendations(inputs):
     applicable_gearmotors = []
 
     for gm in all_gearmotors:
-
-
-        print(f'{[gm.gearbox_ratio]}    {[inputs["ratio"]]}')
-
-        if gm.motor_power == inputs['power']:
-            if gm.gearbox_ratio == inputs['ratio']:
+        if gm.motor.power == inputs['power']:
+            if gm.gearbox.ratio == inputs['ratio']:
                     applicable_gearmotors.append(gm)
 
     return applicable_gearmotors

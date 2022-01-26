@@ -1,4 +1,4 @@
-# This will define the FrameRecommend class, which is just the Recommend Frame in that tab
+# This will define the FrameRecommend class, to display the entire Recommend Frame
 
 
 from functionRecommend import *
@@ -52,7 +52,10 @@ class FrameRecommend(tk.Frame):
         self.entry_trq_tol = tk.Entry(self.frame_inputs, width=entry_width)
         self.label_trq_perc = tk.Label(self.frame_inputs, text='%')
         self.label_safety = tk.Label(self.frame_inputs, text='Safety Factor')
-        self.entry_safety = tk.Entry(self.frame_inputs, width=entry_width)
+        self.entry_safety_low = tk.Entry(self.frame_inputs, width=entry_width)
+        self.entry_safety_high = tk.Entry(self.frame_inputs, width=entry_width)
+        self.label_lower = tk.Label(self.frame_inputs, text='Lower')
+        self.label_upper = tk.Label(self.frame_inputs, text='Upper')
         # To position all the widgets within the grid
         self.label_seriesize.grid(row=0, column=0, columnspan=5, padx=pad_ext, pady=pad_ext)
         self.scroll_seriesize.grid(row=1, column=4, padx=pad_ext, pady=pad_ext, sticky='ns')
@@ -71,7 +74,11 @@ class FrameRecommend(tk.Frame):
         self.entry_trq_tol.grid(row=5, column=3, padx=pad_ext, pady=pad_ext)
         self.label_trq_perc.grid(row=5, column=4, padx=pad_ext, pady=pad_ext)
         self.label_safety.grid(row=6, column=0, padx=pad_ext, pady=pad_ext)
-        self.entry_safety.grid(row=6, column=1, padx=pad_ext, pady=pad_ext)
+        self.entry_safety_low.grid(row=6, column=1, padx=pad_ext, pady=pad_ext)
+        self.entry_safety_high.grid(row=6, column=3, padx=pad_ext, pady=pad_ext)
+        self.label_lower.grid(row=7, column=1, padx=pad_ext, pady=pad_ext)
+        self.label_upper.grid(row=7, column=3, padx=pad_ext, pady=pad_ext)
+
         # To enable the scrolling of the two trees
         self.scroll_seriesize.config(command=self.tree_seriesize.yview)
         self.scroll_poles.config(command=self.tree_poles.yview)
@@ -79,7 +86,7 @@ class FrameRecommend(tk.Frame):
         # To generate all the series and sizes in the selection tree
         series_sizes = {'VF_W':[], 'A':[], 'C':[], 'F':[]}
         for series_size in series_sizes:
-            workbook = openpyxl.load_workbook(f'{series_size}_Gearboxes.xlsx')
+            workbook = openpyxl.load_workbook(f'Datasheets/{series_size}_Gearboxes.xlsx')
             sheets =  workbook.worksheets
             for sheet in sheets:
                 series_size_name = sheet['A2'].value
@@ -94,6 +101,7 @@ class FrameRecommend(tk.Frame):
             self.tree_seriesize.insert('', 'end', key, text=key)
             for value in series_sizes[key]:
                 self.tree_seriesize.insert(key, 'end', value, text=value)
+        
         # To Generate all the motor pole options in that selection tree
         for poles in ['2 Pole', '4 Pole', '6 Pole', '8 Pole']:
             self.tree_poles.insert('', 'end', poles, text=poles)
@@ -118,7 +126,8 @@ class FrameRecommend(tk.Frame):
         self.spd_tol = self.entry_spd_tol.get()
         self.trq = self.entry_trq.get()
         self.trq_tol = self.entry_trq_tol.get()
-        self.safety = self.entry_safety.get()
+        self.safety_low = self.entry_safety_low.get()
+        self.safety_high = self.entry_safety_high.get()
         self.raw_series_sizes = self.tree_seriesize.get_checked()
         self.poles = self.tree_poles.get_checked()
         
@@ -126,8 +135,8 @@ class FrameRecommend(tk.Frame):
         self.series_sizes = {'VF_W':[], 'A':[], 'C':[], 'F':[]}
         replacement = str.maketrans(string.punctuation, ' '*32)
         for serie_size in self.raw_series_sizes:
-            no_punc = serie_size.translate(replacement)
-            name = re.search(r'[A-Z]+ [A-Z]+ [0-9]+ [0-9]+|[A-Z]+ [0-9]+', no_punc).group()
+            remove_punctuation = serie_size.translate(replacement)
+            name = re.search(r'[A-Z]+ [A-Z]+ [0-9]+ [0-9]+|[A-Z]+ [0-9]+', remove_punctuation).group()
             if (name[0] == 'V' or name[0] == 'W'):
                 self.series_sizes['VF_W'].append(name)
             elif (name[0] == 'A'):
@@ -143,7 +152,8 @@ class FrameRecommend(tk.Frame):
         'spd_tol': float(self.spd_tol),
         'trq': float(self.trq),
         'trq_tol': float(self.trq_tol),
-        'safety': float(self.safety),
+        'safety_low': float(self.safety_low),
+        'safety_high': float(self.safety_high),
         'series_sizes': self.series_sizes,
         'poles': self.poles
         }

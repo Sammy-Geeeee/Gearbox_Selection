@@ -1,4 +1,4 @@
-# This will define the FrameCheck class, which is just the Check Frame in that tab
+# This will define the FrameCheck class, which will be used to display the entire Check Frame
 
 
 from functionCheck import *
@@ -37,16 +37,14 @@ class FrameCheck(tk.Frame):
         # Widgets in the Check tab input frame
         self.label_seriesize = tk.Label(self.frame_inputs, text='Applicable Series/Sizes')
         self.scroll_seriesize = tk.Scrollbar(self.frame_inputs)
-        self.tree_seriesize = ttkwidgets.CheckboxTreeview(self.frame_inputs, yscrollcommand=self.scroll_seriesize.set, columns=2)  # Not sure about this column property?
+        self.tree_seriesize = ttkwidgets.CheckboxTreeview(self.frame_inputs, yscrollcommand=self.scroll_seriesize.set, columns=2)
         self.label_poles = tk.Label(self.frame_inputs, text='Motor Poles')
         self.scroll_poles = tk.Scrollbar(self.frame_inputs)
-        self.tree_poles = ttkwidgets.CheckboxTreeview(self.frame_inputs, yscrollcommand=self.scroll_poles.set, columns=2)  # What is the columns property doing?
-        
+        self.tree_poles = ttkwidgets.CheckboxTreeview(self.frame_inputs, yscrollcommand=self.scroll_poles.set, columns=2)
         self.label_ratio = tk.Label(self.frame_inputs, text='Ratio')
         self.entry_ratio = tk.Entry(self.frame_inputs, width=entry_width)
         self.label_pwr = tk.Label(self.frame_inputs, text='Power (kW)')
         self.entry_pwr = tk.Entry(self.frame_inputs, width=entry_width)
-    
     # To position all the widgets within the grid
         self.label_seriesize.grid(row=0, column=0, columnspan=5, padx=pad_ext, pady=pad_ext)
         self.scroll_seriesize.grid(row=1, column=4, padx=pad_ext, pady=pad_ext, sticky='ns')
@@ -65,7 +63,7 @@ class FrameCheck(tk.Frame):
         # To generate all the series and sizes in the selection tree
         series_sizes = {'VF_W':[], 'A':[], 'C':[], 'F':[]}
         for series_size in series_sizes:
-            workbook = openpyxl.load_workbook(f'{series_size}_Gearboxes.xlsx')
+            workbook = openpyxl.load_workbook(f'Datasheets/{series_size}_Gearboxes.xlsx')
             sheets =  workbook.worksheets
             for sheet in sheets:
                 series_size_name = sheet['A2'].value
@@ -80,6 +78,7 @@ class FrameCheck(tk.Frame):
             self.tree_seriesize.insert('', 'end', key, text=key)
             for value in series_sizes[key]:
                 self.tree_seriesize.insert(key, 'end', value, text=value)
+        
         # To Generate all the motor pole options in that selection tree
         for poles in ['2 Pole', '4 Pole', '6 Pole', '8 Pole']:
             self.tree_poles.insert('', 'end', poles, text=poles)
@@ -109,8 +108,8 @@ class FrameCheck(tk.Frame):
         self.series_sizes = {'VF_W':[], 'A':[], 'C':[], 'F':[]}
         replacement = str.maketrans(string.punctuation, ' '*32)
         for serie_size in self.raw_series_sizes:
-            no_punc = serie_size.translate(replacement)
-            name = re.search(r'[A-Z]+ [A-Z]+ [0-9]+ [0-9]+|[A-Z]+ [0-9]+', no_punc).group()
+            remove_punctuation = serie_size.translate(replacement)
+            name = re.search(r'[A-Z]+ [A-Z]+ [0-9]+ [0-9]+|[A-Z]+ [0-9]+', remove_punctuation).group()
             if (name[0] == 'V' or name[0] == 'W'):
                 self.series_sizes['VF_W'].append(name)
             elif (name[0] == 'A'):
