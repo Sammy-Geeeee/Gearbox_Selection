@@ -63,6 +63,9 @@ class GearedMotor:
             low_data = self.gearbox.p6data
             high_data = self.gearbox.p4data
         elif 1400 < self.motor.speed <= 3000:
+            # I've chosen to make this be up to 3000, even though the data is only counted up to 2800
+            # The lack of data after 2800rpm means I have no real means of ensuring accuracy of these selections
+            # However the only motors that are within this range are high efficiency/power 2P motors, which are not commonly used
             motor_low = 1400
             motor_high = 2800
             low_data = self.gearbox.p4data
@@ -85,17 +88,17 @@ class GearedMotor:
         gbox_out_eff = interpolation(eff_low, eff_high, motor_low, motor_high, self.motor.speed)
 
         # Now to make the actual ratings for each geared motor combo
-        self.gm_spd = gbox_out_spd
-        self.gm_trq = gbox_out_trq * (self.motor.power / gbox_out_pwr)
-        self.gm_safety = gbox_out_pwr / self.motor.power
+        self.speed = gbox_out_spd
+        self.torque = gbox_out_trq * (self.motor.power / gbox_out_pwr)
+        self.safety = gbox_out_pwr / self.motor.power
 
 
     def printData(self):
         data0 = f'{self.gearbox.brand} {self.gearbox.series_size}_ {self.gearbox.ratio}:1 {self.gearbox_frame} B_'
         data1 = f'{self.motor.brand} {self.motor.series} {self.motor.frame} {self.motor.poles} B_  ({self.motor.power}kW, {self.motor.poles}P)'
         if self.gearbox.shaft[1] != 'None':
-            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox.shaft[0]}mm or {self.gearbox.shaft[1]}mm output'
+            data2 = f'{self.speed:.2f}rpm,  {self.torque:.2f}Nm,  {self.safety:.2f} S.F,  {self.gearbox.shaft[0]}mm or {self.gearbox.shaft[1]}mm output'
         else:
-            data2 = f'{self.gm_spd:.2f}rpm,  {self.gm_trq:.2f}Nm,  {self.gm_safety:.2f} S.F,  {self.gearbox.shaft[0]}mm output'
+            data2 = f'{self.speed:.2f}rpm,  {self.torque:.2f}Nm,  {self.safety:.2f} S.F,  {self.gearbox.shaft[0]}mm output'
         
         return [data0, data1, data2]

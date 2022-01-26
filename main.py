@@ -41,7 +41,7 @@ class Window:
 
 
 def main():
-    window = Window(tk.Tk(), 'Gearbox Selection', '500x500')  # Main window defined here
+    window = Window(tk.Tk(), 'Gearbox Selection', '1094x865')  # Main window defined here
     
 
 main()

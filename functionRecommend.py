@@ -14,7 +14,7 @@ def find_motors(inputs):  # To find all the applicable motors
         # To find all the data needed for every motor
         sheet_poles = str(motor_ws.cell(column=1, row=1).value[0])
         for r in range(3, motor_ws.max_row+1):
-            if motor_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows
+            if motor_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows, spaces, etc...
                 pass
             else:
                 sheet_power = float(motor_ws.cell(column=1, row=r).value)
@@ -34,6 +34,7 @@ def find_motors(inputs):  # To find all the applicable motors
 
 def find_gearboxes(inputs):  # To find all the applicable gearboxes
     gearboxes = []
+    # To list all the columns that is related to gearbox data for each of the motor pole options
     p8_cols = [2, 3, 4, 5]
     p6_cols = [6, 7, 8, 9]
     p4_cols = [10, 11, 12, 13]
@@ -43,6 +44,7 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
     for series in inputs['series_sizes']:
         if len(inputs['series_sizes'][series]) > 0:
             gearbox_wb = openpyxl.load_workbook(f'Datasheets/{series}_Gearboxes.xlsx')
+            
             # To open all the appropriate worksheets in each book
             for size in inputs['series_sizes'][series]:
                 gearbox_ws = gearbox_wb[size]
@@ -52,7 +54,7 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
                 sheet_shaft = [str(gearbox_ws.cell(row=1, column=15).value), str(gearbox_ws.cell(row=1, column=16).value)]
                 # To add all the data to the above empty lists
                 for r in range(4, gearbox_ws.max_row+1):
-                    if gearbox_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows
+                    if gearbox_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows, spaces, blank cells, etc
                         pass
                     else:
                         sheet_ratio = str(gearbox_ws.cell(row=r, column=1).value)
@@ -78,22 +80,25 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
     return gearboxes
 
 
-def find_gearmotors(inputs):
+def find_gearedmotors(inputs):
     motors = find_motors(inputs)
     gearboxes = find_gearboxes(inputs)
-    gearmotors = []
+    gearedmotors = []
 
     for motor in motors:
         for gearbox in gearboxes:
-            gearmotor = GearedMotor(gearbox, motor)
-            gearmotors.append(gearmotor)
+            gearedmotor = GearedMotor(gearbox, motor)
+            gearedmotors.append(gearedmotor)
     
-    return gearmotors
+    return gearedmotors
+    # This will find every possible geared motor combination based on the series sizes and motor poles
+    # This is fairly inefficient as it will generate every possible combination if you click all the boxes
+    # In future improvements, perhaps combine this and the make_recommendations function, to make more efficient
 
 
 def make_recommendations(inputs):
-    all_gearmotors = find_gearmotors(inputs)
-    applicable_gearmotors = []
+    all_gearedmotors = find_gearedmotors(inputs)
+    applicable_gearedmotors = []
 
     # To turn all the inputs into numbers easy to work with
     spd_lower = inputs['spd'] * (1 - inputs['spd_tol']/100)
@@ -103,10 +108,10 @@ def make_recommendations(inputs):
     safety_low = inputs['safety_low']
     safety_high = inputs['safety_high']
 
-    for gm in all_gearmotors:
-        if spd_lower <= gm.gm_spd <= spd_higher:
-            if trq_lower <= gm.gm_trq <= trq_higher:
-                if safety_low <= gm.gm_safety <= safety_high:
-                    applicable_gearmotors.append(gm)
+    for geared_motor in all_gearedmotors:
+        if spd_lower <= geared_motor.speed <= spd_higher:
+            if trq_lower <= geared_motor.torque <= trq_higher:
+                if safety_low <= geared_motor.safety <= safety_high:
+                    applicable_gearedmotors.append(geared_motor)
 
-    return applicable_gearmotors
+    return applicable_gearedmotors

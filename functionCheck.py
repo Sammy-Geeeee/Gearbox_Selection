@@ -14,7 +14,7 @@ def find_motors(inputs):  # To find all the applicable motors
         # To find all the data needed for every motor
         sheet_poles = str(motor_ws.cell(column=1, row=1).value[0])
         for r in range(3, motor_ws.max_row+1):
-            if motor_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows
+            if motor_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows, spaces, blank values, etc...
                 pass
             else:
                 sheet_power = float(motor_ws.cell(column=1, row=r).value)
@@ -34,6 +34,7 @@ def find_motors(inputs):  # To find all the applicable motors
 
 def find_gearboxes(inputs):  # To find all the applicable gearboxes
     gearboxes = []
+    # To list all the columns that is related to gearbox data for each of the motor pole options
     p8_cols = [2, 3, 4, 5]
     p6_cols = [6, 7, 8, 9]
     p4_cols = [10, 11, 12, 13]
@@ -43,6 +44,7 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
     for series in inputs['series_sizes']:
         if len(inputs['series_sizes'][series]) > 0:
             gearbox_wb = openpyxl.load_workbook(f'Datasheets/{series}_Gearboxes.xlsx')
+            
             # To open all the appropriate worksheets in each book
             for size in inputs['series_sizes'][series]:
                 gearbox_ws = gearbox_wb[size]
@@ -52,7 +54,7 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
                 sheet_shaft = [str(gearbox_ws.cell(row=1, column=15).value), str(gearbox_ws.cell(row=1, column=16).value)]
                 # To add all the data to the above empty lists
                 for r in range(4, gearbox_ws.max_row+1):
-                    if gearbox_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows
+                    if gearbox_ws.cell(column=1, row=r).value == ('' or None):  # This will skip all the invalid rows, spaces, blank cells, etc
                         pass
                     else:
                         sheet_ratio = float(gearbox_ws.cell(row=r, column=1).value)
@@ -78,26 +80,29 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
     return gearboxes
 
 
-def find_gearmotors(inputs):
+def find_gearedmotors(inputs):
     motors = find_motors(inputs)
     gearboxes = find_gearboxes(inputs)
-    gearmotors = []
+    gearedmotors = []
 
     for motor in motors:
         for gearbox in gearboxes:
-            gearmotor = GearedMotor(gearbox, motor)
-            gearmotors.append(gearmotor)
+            gearedmotor = GearedMotor(gearbox, motor)
+            gearedmotors.append(gearedmotor)
     
-    return gearmotors
+    return gearedmotors
+    # This will find every possible geared motor combination based on the series sizes and motor poles
+    # This is fairly inefficient as it will generate every possible combination if you click all the boxes
+    # In future improvements, perhaps combine this and the make_recommendations function, to make more efficient
 
 
 def make_recommendations(inputs):
-    all_gearmotors = find_gearmotors(inputs)
-    applicable_gearmotors = []
+    all_gearedmotors = find_gearedmotors(inputs)
+    applicable_gearedmotors = []
 
-    for gm in all_gearmotors:
-        if gm.motor.power == inputs['power']:
-            if gm.gearbox.ratio == inputs['ratio']:
-                    applicable_gearmotors.append(gm)
+    for geared_motor in all_gearedmotors:
+        if geared_motor.motor.power == inputs['power']:
+            if geared_motor.gearbox.ratio == inputs['ratio']:
+                    applicable_gearedmotors.append(geared_motor)
 
-    return applicable_gearmotors
+    return applicable_gearedmotors
