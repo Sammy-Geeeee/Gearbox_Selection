@@ -5,7 +5,7 @@ import openpyxl
 from Classes import *
 
 
-def find_motors(inputs):  # To find all the applicable motors
+def findMotors(inputs):  # To find all the applicable motors
     motors = []
     motor_wb = openpyxl.load_workbook('Datasheets/Motors.xlsx')
     for poles in inputs['poles']:
@@ -32,7 +32,7 @@ def find_motors(inputs):  # To find all the applicable motors
     return motors
 
 
-def find_gearboxes(inputs):  # To find all the applicable gearboxes
+def findGearboxes(inputs):  # To find all the applicable gearboxes
     gearboxes = []
     # To list all the columns that is related to gearbox data for each of the motor pole options
     p8_cols = [2, 3, 4, 5]
@@ -80,9 +80,9 @@ def find_gearboxes(inputs):  # To find all the applicable gearboxes
     return gearboxes
 
 
-def find_gearedmotors(inputs):
-    motors = find_motors(inputs)
-    gearboxes = find_gearboxes(inputs)
+def findGearedMotors(inputs):
+    motors = findMotors(inputs)
+    gearboxes = findGearboxes(inputs)
     gearedmotors = []
 
     for motor in motors:
@@ -96,8 +96,8 @@ def find_gearedmotors(inputs):
     # In future improvements, perhaps combine this and the make_recommendations function, to make more efficient
 
 
-def make_recommendations(inputs):
-    all_gearedmotors = find_gearedmotors(inputs)
+def generateResults(inputs):
+    all_gearedmotors = findGearedMotors(inputs)
     applicable_gearedmotors = []
 
     for geared_motor in all_gearedmotors:

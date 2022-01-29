@@ -135,7 +135,7 @@ class FrameCheck(tk.Frame):
         inputs = self.retrieveInputs()
         self.list_reco.delete(0, tk.END)
 
-        gearedmotors = make_recommendations(inputs)
+        gearedmotors = generateResults(inputs)
         for gearedmotor in gearedmotors:
             self.list_reco.insert(tk.END, gearedmotor.printData()[0])
             self.list_reco.insert(tk.END, gearedmotor.printData()[1])
