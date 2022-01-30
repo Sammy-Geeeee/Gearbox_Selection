@@ -2,7 +2,7 @@
 
 
 import openpyxl
-from Classes import *
+from classes import *
 
 
 def findMotors(inputs):  # To find all the applicable motors

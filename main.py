@@ -7,8 +7,8 @@ There is also a checking function, that will take a series, ratio, and power inp
 """
 
 
-from FrameRecommend import *
-from FrameCheck import *
+from frameRecommend import *
+from frameCheck import *
 import tkinter as tk
 from tkinter import ttk
 
@@ -32,6 +32,12 @@ class Window:
         # And to add them to the main notebook
         notebook_main.add(tab_check, text='Check Geared Motor')
         notebook_main.add(tab_recommend, text='Recommend Geared Motor')
+        # Making configurations to some rows and columns
+        tab_check.columnconfigure([2], weight=1)
+        tab_recommend.columnconfigure([2], weight=1)
+        tab_check.rowconfigure([0], weight=1)
+        tab_recommend.rowconfigure([0], weight=1)
+
 
         # Putting all the frames into the main program now
         FrameRecommend(tab_recommend)

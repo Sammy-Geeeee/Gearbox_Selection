@@ -20,14 +20,17 @@ class FrameCheck(tk.Frame):
         pad_int = 2
         entry_width = 10
 
-        # To make all the widgets within the Check tab
+        # To make all the frames within the Check tab
         self.frame_inputs = tk.Frame(self.master)
         self.separator_in_out = ttk.Separator(self.master, orient='vertical')
         self.frame_outputs = tk.Frame(self.master)
         # This will be all the positioning for these primary frames
         self.frame_inputs.grid(row=0, column=0, padx=pad_ext, pady=pad_ext, sticky='n')
         self.separator_in_out.grid(row=0, column=1, pady=pad_ext, sticky='nsew')
-        self.frame_outputs.grid(row=0, column=2, padx=pad_ext, pady=pad_ext, sticky='n')
+        self.frame_outputs.grid(row=0, column=2, padx=pad_ext, pady=pad_ext, sticky='nsew')
+        # Row and column configurations
+        self.frame_outputs.columnconfigure([0], weight=1)
+        self.frame_outputs.rowconfigure([2], weight=1)
 
 
         # Widgets in the Check tab input frame
@@ -92,7 +95,7 @@ class FrameCheck(tk.Frame):
         self.label_output.grid(row=0, column=0, columnspan=2, padx=pad_ext, pady=[pad_ext, 8*pad_ext])
         self.label_reco.grid(row=1, column=0, columnspan=2, padx=pad_ext, pady=pad_ext)
         self.scroll_reco.grid(row=2, column=1, padx=[0, pad_ext], pady=pad_ext, sticky='ns')
-        self.list_reco.grid(row=2, column=0, padx=[pad_ext, 0], pady=pad_ext)
+        self.list_reco.grid(row=2, column=0, padx=[pad_ext, 0], pady=pad_ext, sticky='nsew')
         self.button_reco.grid(row=3, column=0, columnspan=2, padx=pad_ext, pady=[5*pad_ext, pad_ext])
         # Configs for various things
         self.scroll_reco.config(command=self.list_reco.yview)
