@@ -59,7 +59,7 @@ def checkMotorData(book):
     print('Motors completed checking.')
 
 
-gearbox_books = ['VF_W', 'A', 'C']  #, 'F']
+gearbox_books = ['VF_W', 'A', 'C', 'F']
 motor_book = 'Motors'
 checkGearboxData(gearbox_books)
 checkMotorData(motor_book)

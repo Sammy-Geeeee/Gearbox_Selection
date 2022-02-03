@@ -51,3 +51,7 @@ def main():
     
 
 main()
+
+
+# Future Improvements
+# Allow units to be chosen, torque in Nm, lb.ft, power in kW, hp, etc...
