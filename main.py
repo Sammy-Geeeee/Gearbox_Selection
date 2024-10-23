@@ -4,6 +4,8 @@
 This program is to take a basic set of mechanical info, for both the input and output of the setup,
 And recommend a gearbox and motor combination that will provide the requested outputs.
 There is also a checking function, that will take a series, ratio, and power input, and provide the specs for this.
+
+The purpose of this program was to help me in a previous job, as all this work was done by hand and take information from several large paper catalogues
 """
 
 
